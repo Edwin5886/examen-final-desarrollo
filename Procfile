@@ -1,1 +1,1 @@
-web: python railway_start.py && gunicorn Final.wsgi:application --bind 0.0.0.0:$PORT --log-level info
+web: python start.py && gunicorn Final.wsgi:application --bind 0.0.0.0:$PORT
