@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -73,17 +74,24 @@ WSGI_APPLICATION = 'Final.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# Configuración automática: SQLite para desarrollo local, PostgreSQL para producción
 
-# Configuración SQLite para desarrollo (cambiar por MySQL en producción)
-# Database para desarrollo local
-# Usar SQLite en producción temporalmente hasta que PostgreSQL funcione
+# Configuración por defecto (desarrollo)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Si hay DATABASE_URL (Railway), usar PostgreSQL automáticamente
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES['default'] = dj_database_url.config(
+        default=DATABASE_URL,
+        conn_max_age=600,
+        conn_health_checks=True
+    )
 
 
 # Password validation
