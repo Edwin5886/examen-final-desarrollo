@@ -4,14 +4,10 @@ NIXPACKS_PYTHON_VERSION = "3.10"
 [phases.build]
 cmds = [
     "echo '📦 Instalando dependencias...'",
-    "pip install -r requirements.txt"
-]
-
-[phases.install]
-cmds = [
+    "pip install -r requirements.txt",
     "echo '🔧 Configurando aplicación...'",
     "python manage.py collectstatic --noinput"
 ]
 
 [start]
-cmd = "python railway_start.py && exec gunicorn Final.wsgi:application --bind 0.0.0.0:$PORT --log-level info"
+cmd = "python start.py && exec gunicorn Final.wsgi:application --bind 0.0.0.0:$PORT --log-level info"
