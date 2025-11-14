@@ -38,6 +38,7 @@ urlpatterns = [
     # Debug URLs
     path('debug/', debug_view, name='debug'),
     path('railway-debug/', views.railway_debug, name='railway_debug'),
+    path('railway-init/', views.railway_init, name='railway_init'),
     
     # URLs principales
     path('', views.inicio, name='inicio'),

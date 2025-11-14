@@ -242,3 +242,54 @@ def railway_debug(request):
     }
     
     return JsonResponse(debug_info, json_dumps_params={'indent': 2})
+
+def railway_init(request):
+    """Vista para forzar inicialización de Railway"""
+    import subprocess
+    
+    results = []
+    
+    def run_init_cmd(cmd, description):
+        try:
+            results.append(f"🚀 {description}")
+            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=30)
+            if result.returncode == 0:
+                results.append(f"✅ {description} - EXITOSO")
+                if result.stdout:
+                    results.append(f"📤 {result.stdout[:200]}")
+            else:
+                results.append(f"❌ {description} - ERROR")
+                if result.stderr:
+                    results.append(f"⚠️ {result.stderr[:200]}")
+            return result.returncode == 0
+        except subprocess.TimeoutExpired:
+            results.append(f"⏱️ {description} - TIMEOUT")
+            return False
+        except Exception as e:
+            results.append(f"💥 {description} - EXCEPCIÓN: {str(e)}")
+            return False
+    
+    # Ejecutar inicialización
+    results.append("🔧 INICIANDO CONFIGURACIÓN MANUAL DE RAILWAY")
+    
+    run_init_cmd("python manage.py makemigrations", "Crear migraciones")
+    run_init_cmd("python manage.py migrate", "Ejecutar migraciones")
+    run_init_cmd("python manage.py poblar_datos", "Poblar datos")
+    
+    # Verificar resultado
+    try:
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT COUNT(*) FROM tienda_categoria")
+            count = cursor.fetchone()[0]
+        results.append(f"🎉 INICIALIZACIÓN COMPLETA - {count} categorías creadas")
+        status = "SUCCESS"
+    except Exception as e:
+        results.append(f"❌ VERIFICACIÓN FALLÓ: {str(e)}")
+        status = "FAILED"
+    
+    return JsonResponse({
+        "status": status,
+        "log": results,
+        "next_step": "Ahora puedes acceder a /productos/ y /categorias/"
+    }, json_dumps_params={'indent': 2})
