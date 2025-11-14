@@ -1,5 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
+from django.http import JsonResponse
+from django.conf import settings
+import os
 from .models import Categoria, Producto, Resena
 from .forms import ProductoForm, CategoriaForm
 
@@ -190,3 +193,52 @@ def eliminar_categoria(request, categoria_id):
         messages.success(request, f'Categoría "{nombre_categoria}" eliminada exitosamente.')
     
     return redirect('tienda:categorias')
+
+def railway_debug(request):
+    """Vista de diagnóstico para Railway"""
+    env_vars = {}
+    
+    # Variables de Railway importantes
+    railway_vars = [
+        'RAILWAY_ENVIRONMENT_NAME', 'DATABASE_URL', 'DATABASE_PRIVATE_URL',
+        'PGDATABASE', 'PGUSER', 'PGPASSWORD', 'PGHOST', 'PGPORT',
+        'POSTGRES_URL', 'POSTGRES_PRIVATE_URL'
+    ]
+    
+    for var in railway_vars:
+        value = os.environ.get(var)
+        if value:
+            # Ocultar contraseñas para seguridad
+            if 'PASSWORD' in var or 'URL' in var:
+                env_vars[var] = value[:20] + '...' if len(value) > 20 else 'SET'
+            else:
+                env_vars[var] = value
+        else:
+            env_vars[var] = 'NO_SET'
+    
+    # Info de la base de datos actual
+    db_config = settings.DATABASES['default']
+    
+    # Intentar contar categorías
+    try:
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT COUNT(*) FROM tienda_categoria")
+            categoria_count = cursor.fetchone()[0]
+        db_status = f"OK - {categoria_count} categorías"
+    except Exception as e:
+        db_status = f"ERROR: {str(e)}"
+    
+    debug_info = {
+        'environment_variables': env_vars,
+        'database_config': {
+            'engine': db_config['ENGINE'],
+            'name': db_config.get('NAME', 'N/A'),
+            'host': db_config.get('HOST', 'N/A'),
+            'port': db_config.get('PORT', 'N/A'),
+        },
+        'database_status': db_status,
+        'is_railway': bool(os.environ.get('RAILWAY_ENVIRONMENT_NAME')),
+    }
+    
+    return JsonResponse(debug_info, json_dumps_params={'indent': 2})

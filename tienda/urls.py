@@ -35,8 +35,9 @@ def debug_view(request):
         }, status=500)
 
 urlpatterns = [
-    # Debug URL
+    # Debug URLs
     path('debug/', debug_view, name='debug'),
+    path('railway-debug/', views.railway_debug, name='railway_debug'),
     
     # URLs principales
     path('', views.inicio, name='inicio'),

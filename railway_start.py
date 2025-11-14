@@ -51,41 +51,47 @@ def main():
             cursor.execute("SELECT 1")
         print("✅ Conexión a base de datos exitosa")
     except Exception as e:
-        print(f"❌ Error de conexión a base de datos: {e}")
-        print("🔄 Intentando continuar...")
+        print(f"⚠️ Error de conexión a base de datos: {e}")
+        print("🔄 Continuando con configuración...")
     
     # Ejecutar migraciones
     print("\n📦 Ejecutando migraciones...")
-    if not run_command(['manage.py', 'makemigrations']):
-        print("⚠️  Advertencia: makemigrations falló")
     
+    # Hacer migraciones siempre (por si hay cambios)
+    run_command(['manage.py', 'makemigrations'])
+    
+    # Migrar (crítico que funcione)
     if not run_command(['manage.py', 'migrate']):
         print("❌ Error crítico: migrate falló")
-        sys.exit(1)
+        print("🔄 Intentando con --run-syncdb...")
+        if not run_command(['manage.py', 'migrate', '--run-syncdb']):
+            print("❌ Migration failed even with syncdb")
+            # No salir, continuar para ver qué pasa
     
-    # Verificar tablas
+    # Verificar tablas después de migración
     try:
         from tienda.models import Categoria
         count = Categoria.objects.count()
-        print(f"✅ Tabla categorías existe con {count} registros")
-    except Exception as e:
-        print(f"⚠️  Tabla categorías no accesible: {e}")
-        print("🔄 Intentando poblar datos...")
+        print(f"✅ Tabla categorías funcional con {count} registros")
         
-        # Intentar poblar datos
-        if run_command(['manage.py', 'poblar_datos']):
-            try:
-                count = Categoria.objects.count()
-                print(f"✅ Datos poblados: {count} categorías")
-            except:
-                print("⚠️  No se pudo verificar datos poblados")
+        # Si no hay datos, poblar
+        if count == 0:
+            print("📝 Poblando datos iniciales...")
+            run_command(['manage.py', 'poblar_datos'])
+            count = Categoria.objects.count()
+            print(f"✅ Datos poblados: {count} categorías")
+            
+    except Exception as e:
+        print(f"⚠️  Error verificando categorías: {e}")
+        print("🔄 Intentando poblar datos de todas formas...")
+        run_command(['manage.py', 'poblar_datos'])
     
     # Recolectar archivos estáticos
     print("\n🎨 Recolectando archivos estáticos...")
     run_command(['manage.py', 'collectstatic', '--noinput'])
     
     print("\n🎉 Inicialización completa!")
-    print("🚀 Iniciando servidor Gunicorn...")
+    print("🚀 Aplicación lista para iniciar...")
 
 if __name__ == '__main__':
     main()

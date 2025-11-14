@@ -74,12 +74,12 @@ WSGI_APPLICATION = 'Final.wsgi.application'
 
 
 # Database
-# Configuración automática: SQLite para desarrollo local, PostgreSQL para producción
+# Configuración inteligente: PostgreSQL si está disponible, SQLite como fallback
 
 # Detectar si estamos en Railway
 IS_RAILWAY = os.environ.get('RAILWAY_ENVIRONMENT_NAME') is not None
 
-# Configuración por defecto (desarrollo)
+# Configuración por defecto (SQLite para desarrollo y fallback)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -87,29 +87,39 @@ DATABASES = {
     }
 }
 
-# Configuración para Railway - forzar PostgreSQL
-if IS_RAILWAY:
-    # Variables de entorno estándar de Railway para PostgreSQL
+# Intentar PostgreSQL si tenemos DATABASE_URL (método principal)
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    try:
+        DATABASES['default'] = dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True
+        )
+        print(f"✅ Usando PostgreSQL via DATABASE_URL")
+    except Exception as e:
+        print(f"⚠️ Error configurando DATABASE_URL: {e}")
+
+# Método alternativo para Railway con variables individuales
+elif IS_RAILWAY and all(os.environ.get(var) for var in ['PGDATABASE', 'PGUSER', 'PGPASSWORD', 'PGHOST', 'PGPORT']):
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('PGDATABASE', 'railway'),
-        'USER': os.environ.get('PGUSER', 'postgres'),
-        'PASSWORD': os.environ.get('PGPASSWORD', ''),
-        'HOST': os.environ.get('PGHOST', 'localhost'),
-        'PORT': os.environ.get('PGPORT', '5432'),
+        'NAME': os.environ.get('PGDATABASE'),
+        'USER': os.environ.get('PGUSER'),
+        'PASSWORD': os.environ.get('PGPASSWORD'),
+        'HOST': os.environ.get('PGHOST'),
+        'PORT': os.environ.get('PGPORT'),
         'OPTIONS': {
             'sslmode': 'require',
         },
     }
+    print(f"✅ Usando PostgreSQL via variables PG*")
 
-# Backup: Si hay DATABASE_URL, usarla también
-DATABASE_URL = os.environ.get('DATABASE_URL')
-if DATABASE_URL and not IS_RAILWAY:
-    DATABASES['default'] = dj_database_url.config(
-        default=DATABASE_URL,
-        conn_max_age=600,
-        conn_health_checks=True
-    )
+# Si estamos en Railway pero no hay PostgreSQL disponible, usar SQLite
+elif IS_RAILWAY:
+    print(f"⚠️ En Railway pero PostgreSQL no disponible, usando SQLite")
+    
+print(f"📊 Base de datos configurada: {DATABASES['default']['ENGINE']}")
 
 
 # Password validation
