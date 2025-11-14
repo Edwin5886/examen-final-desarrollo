@@ -28,14 +28,46 @@ def categorias(request):
     return render(request, 'tienda/categorias.html', context)
 
 def productos(request):
-    """Vista simplificada para productos"""
+    """Vista para la página de productos con opción de agregar"""
     from django.http import HttpResponse
     
-    # Primero, intentemos una respuesta simple
     try:
-        return HttpResponse("<h1>Vista de productos funcionando</h1><p>Si ves esto, el problema está en el template o los datos.</p>")
+        # Verificar que las tablas existan
+        from .models import Categoria, Producto
+        
+        # Manejar formulario de agregar producto
+        if request.method == 'POST':
+            form = ProductoForm(request.POST)
+            if form.is_valid():
+                producto = form.save()
+                messages.success(request, f'Producto "{producto.nombre}" agregado exitosamente.')
+                return redirect('tienda:productos')
+            else:
+                messages.error(request, 'Por favor corrige los errores en el formulario.')
+        else:
+            form = ProductoForm()
+        
+        # Obtener todos los productos
+        productos_lista = Producto.objects.all().select_related('categoria').order_by('-fecha_creacion')
+        
+        context = {
+            'titulo': 'Productos',
+            'productos': productos_lista,
+            'form': form
+        }
+        return render(request, 'tienda/productos.html', context)
+        
     except Exception as e:
-        return HttpResponse(f"Error: {str(e)}")
+        # Si las tablas no existen o hay otro error
+        error_msg = f"""
+        <h1>Error en la página de productos</h1>
+        <p><strong>Error:</strong> {str(e)}</p>
+        <p><strong>Solución:</strong> Las migraciones de base de datos no se ejecutaron correctamente.</p>
+        <p><a href="/admin/">Ir al Admin</a> | <a href="/">Volver al Inicio</a></p>
+        <hr>
+        <p><em>Railway está configurando la base de datos. Espera 1-2 minutos y recarga la página.</em></p>
+        """
+        return HttpResponse(error_msg)
 
 def editar_producto(request, producto_id):
     """Vista para editar un producto"""
