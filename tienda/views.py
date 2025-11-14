@@ -233,9 +233,9 @@ def railway_debug(request):
         'environment_variables': env_vars,
         'database_config': {
             'engine': db_config['ENGINE'],
-            'name': db_config.get('NAME', 'N/A'),
-            'host': db_config.get('HOST', 'N/A'),
-            'port': db_config.get('PORT', 'N/A'),
+            'name': str(db_config.get('NAME', 'N/A')),  # Convertir PosixPath a string
+            'host': str(db_config.get('HOST', 'N/A')),
+            'port': str(db_config.get('PORT', 'N/A')),
         },
         'database_status': db_status,
         'is_railway': bool(os.environ.get('RAILWAY_ENVIRONMENT_NAME')),
