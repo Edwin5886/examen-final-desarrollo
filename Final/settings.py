@@ -76,6 +76,9 @@ WSGI_APPLICATION = 'Final.wsgi.application'
 # Database
 # Configuración automática: SQLite para desarrollo local, PostgreSQL para producción
 
+# Detectar si estamos en Railway
+IS_RAILWAY = os.environ.get('RAILWAY_ENVIRONMENT_NAME') is not None
+
 # Configuración por defecto (desarrollo)
 DATABASES = {
     'default': {
@@ -84,9 +87,24 @@ DATABASES = {
     }
 }
 
-# Si hay DATABASE_URL (Railway), usar PostgreSQL automáticamente
+# Configuración para Railway - forzar PostgreSQL
+if IS_RAILWAY:
+    # Variables de entorno estándar de Railway para PostgreSQL
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('PGDATABASE', 'railway'),
+        'USER': os.environ.get('PGUSER', 'postgres'),
+        'PASSWORD': os.environ.get('PGPASSWORD', ''),
+        'HOST': os.environ.get('PGHOST', 'localhost'),
+        'PORT': os.environ.get('PGPORT', '5432'),
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
+    }
+
+# Backup: Si hay DATABASE_URL, usarla también
 DATABASE_URL = os.environ.get('DATABASE_URL')
-if DATABASE_URL:
+if DATABASE_URL and not IS_RAILWAY:
     DATABASES['default'] = dj_database_url.config(
         default=DATABASE_URL,
         conn_max_age=600,
