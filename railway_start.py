@@ -57,41 +57,24 @@ def main():
     # Ejecutar migraciones
     print("\n📦 Ejecutando migraciones...")
     
-    # Hacer migraciones siempre (por si hay cambios)
-    run_command(['manage.py', 'makemigrations'])
+    # Ejecutar migraciones directamente
+    print("🔄 Ejecutando migrate...")
+    if run_command(['manage.py', 'migrate']):
+        print("✅ Migraciones completadas")
+    else:
+        print("❌ Error en migrate - intentando crear tablas manualmente")
+        run_command(['manage.py', 'migrate', '--run-syncdb'])
     
-    # Migrar (crítico que funcione)
-    if not run_command(['manage.py', 'migrate']):
-        print("❌ Error crítico: migrate falló")
-        print("🔄 Intentando con --run-syncdb...")
-        if not run_command(['manage.py', 'migrate', '--run-syncdb']):
-            print("❌ Migration failed even with syncdb")
-            # No salir, continuar para ver qué pasa
-    
-    # Verificar tablas después de migración
-    try:
-        from tienda.models import Categoria
-        count = Categoria.objects.count()
-        print(f"✅ Tabla categorías funcional con {count} registros")
-        
-        # Si no hay datos, poblar
-        if count == 0:
-            print("📝 Poblando datos iniciales...")
-            run_command(['manage.py', 'poblar_datos'])
-            count = Categoria.objects.count()
-            print(f"✅ Datos poblados: {count} categorías")
-            
-    except Exception as e:
-        print(f"⚠️  Error verificando categorías: {e}")
-        print("🔄 Intentando poblar datos de todas formas...")
-        run_command(['manage.py', 'poblar_datos'])
+    # Poblar datos básicos
+    print("\n📝 Poblando datos...")
+    run_command(['manage.py', 'poblar_datos'])
     
     # Recolectar archivos estáticos
     print("\n🎨 Recolectando archivos estáticos...")
     run_command(['manage.py', 'collectstatic', '--noinput'])
     
     print("\n🎉 Inicialización completa!")
-    print("🚀 Aplicación lista para iniciar...")
+    print("🚀 Script terminado - Gunicorn iniciará automáticamente")
 
 if __name__ == '__main__':
     main()
