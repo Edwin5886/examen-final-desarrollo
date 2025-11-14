@@ -1,0 +1,186 @@
+{% extends 'tienda/base.html' %}
+
+{% block titulo %}Editar Categoría - Mi Tienda{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="hero-section">
+    <div class="container">
+        <h1>Editar Categoría</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'tienda:categorias' %}">Categorías</a></li>
+                <li class="breadcrumb-item active">Editar {{ categoria.nombre }}</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="main-content">
+        
+        <!-- Mensajes -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-edit"></i> Editar Categoría: {{ categoria.nombre }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label for="{{ form.nombre.id_for_label }}" class="form-label">{{ form.nombre.label }}</label>
+                                        {{ form.nombre }}
+                                        {% if form.nombre.errors %}
+                                            <div class="text-danger small">{{ form.nombre.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="{{ form.icono.id_for_label }}" class="form-label">{{ form.icono.label }}</label>
+                                        {{ form.icono }}
+                                        {% if form.icono.errors %}
+                                            <div class="text-danger small">{{ form.icono.errors.0 }}</div>
+                                        {% endif %}
+                                        <div class="form-text">Ejemplo: fas fa-laptop</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.descripcion.id_for_label }}" class="form-label">{{ form.descripcion.label }}</label>
+                                {{ form.descripcion }}
+                                {% if form.descripcion.errors %}
+                                    <div class="text-danger small">{{ form.descripcion.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    {{ form.activa }}
+                                    <label class="form-check-label" for="{{ form.activa.id_for_label }}">
+                                        {{ form.activa.label }}
+                                    </label>
+                                </div>
+                                {% if form.activa.errors %}
+                                    <div class="text-danger small">{{ form.activa.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Vista previa del icono -->
+                            <div class="mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Vista previa</h6>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-white d-flex align-items-center justify-content-center me-3" 
+                                                 style="width: 60px; height: 60px; border-radius: 8px; border: 1px solid #dee2e6;">
+                                                <i class="{{ categoria.icono }} fa-2x text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-1">{{ categoria.nombre }}</h6>
+                                                <p class="text-muted mb-0 small">{{ categoria.descripcion|truncatewords:10 }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Información adicional -->
+                            <div class="mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Información de la categoría</h6>
+                                        <div class="row small">
+                                            <div class="col-md-6">
+                                                <p><strong>ID:</strong> {{ categoria.id }}</p>
+                                                <p><strong>Fecha de creación:</strong> {{ categoria.fecha_creacion|date:"d/m/Y H:i" }}</p>
+                                                <p><strong>Icono actual:</strong> {{ categoria.icono }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>Estado:</strong> 
+                                                    {% if categoria.activa %}
+                                                        <span class="badge bg-success">Activa</span>
+                                                    {% else %}
+                                                        <span class="badge bg-secondary">Inactiva</span>
+                                                    {% endif %}
+                                                </p>
+                                                <p><strong>Productos asociados:</strong> 
+                                                    <span class="badge bg-primary">{{ categoria.producto_set.count }}</span>
+                                                </p>
+                                                {% if categoria.producto_set.count > 0 %}
+                                                    <p class="small text-info">
+                                                        <i class="fas fa-info-circle"></i> 
+                                                        Esta categoría tiene productos asociados
+                                                    </p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Guardar Cambios
+                                </button>
+                                <a href="{% url 'tienda:categorias' %}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Volver a Categorías
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Script para actualizar la vista previa del icono en tiempo real
+document.addEventListener('DOMContentLoaded', function() {
+    const iconoInput = document.querySelector('#id_icono');
+    const nombreInput = document.querySelector('#id_nombre');
+    const descripcionInput = document.querySelector('#id_descripcion');
+    
+    function updatePreview() {
+        const previewIcon = document.querySelector('.card.bg-light i');
+        const previewTitle = document.querySelector('.card.bg-light h6');
+        const previewDesc = document.querySelector('.card.bg-light p.text-muted');
+        
+        if (iconoInput && previewIcon) {
+            previewIcon.className = (iconoInput.value || 'fas fa-tag') + ' fa-2x text-primary';
+        }
+        
+        if (nombreInput && previewTitle) {
+            previewTitle.textContent = nombreInput.value || 'Nombre de categoría';
+        }
+        
+        if (descripcionInput && previewDesc) {
+            const desc = descripcionInput.value || 'Descripción de la categoría';
+            const words = desc.split(' ').slice(0, 10).join(' ');
+            previewDesc.textContent = words + (desc.split(' ').length > 10 ? '...' : '');
+        }
+    }
+    
+    if (iconoInput) iconoInput.addEventListener('input', updatePreview);
+    if (nombreInput) nombreInput.addEventListener('input', updatePreview);
+    if (descripcionInput) descripcionInput.addEventListener('input', updatePreview);
+});
+</script>
+{% endblock %}

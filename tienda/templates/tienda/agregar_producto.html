@@ -1,0 +1,102 @@
+{% extends 'tienda/base.html' %}
+
+{% block titulo %}{{ titulo }} - Mi Tienda{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="hero-section">
+    <div class="container">
+        <h1><i class="fas fa-plus"></i> {{ titulo }}</h1>
+        <p class="lead">Completa los datos del nuevo producto</p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="main-content">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Navegación -->
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'tienda:productos' %}?todos=1">Productos</a></li>
+                        <li class="breadcrumb-item active">Agregar Producto</li>
+                    </ol>
+                </nav>
+
+                <!-- Mensajes -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-form"></i> Datos del Producto</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.nombre.id_for_label }}" class="form-label">{{ form.nombre.label }}</label>
+                                {{ form.nombre }}
+                                {% if form.nombre.errors %}
+                                    <div class="text-danger small">{{ form.nombre.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.categoria.id_for_label }}" class="form-label">{{ form.categoria.label }}</label>
+                                {{ form.categoria }}
+                                {% if form.categoria.errors %}
+                                    <div class="text-danger small">{{ form.categoria.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.descripcion.id_for_label }}" class="form-label">{{ form.descripcion.label }}</label>
+                                {{ form.descripcion }}
+                                {% if form.descripcion.errors %}
+                                    <div class="text-danger small">{{ form.descripcion.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.precio.id_for_label }}" class="form-label">{{ form.precio.label }}</label>
+                                    {{ form.precio }}
+                                    {% if form.precio.errors %}
+                                        <div class="text-danger small">{{ form.precio.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.stock.id_for_label }}" class="form-label">{{ form.stock.label }}</label>
+                                    {{ form.stock }}
+                                    {% if form.stock.errors %}
+                                        <div class="text-danger small">{{ form.stock.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Guardar Producto
+                                </button>
+                                <a href="{% url 'tienda:productos' %}?todos=1" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

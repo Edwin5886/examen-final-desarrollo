@@ -1,0 +1,67 @@
+{% extends 'tienda/base.html' %}
+
+{% block titulo %}{{ titulo }} - Mi Tienda{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <h1>{{ titulo }}</h1>
+        <p class="lead">{{ mensaje }}</p>
+        <a href="{% url 'tienda:productos' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-shopping-cart"></i> Ver Productos
+        </a>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="main-content">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="mb-4">¿Por qué elegir nuestra tienda?</h2>
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-shipping-fast fa-3x mb-3" style="color: #667eea;"></i>
+                                <h5 class="card-title">Envío Rápido</h5>
+                                <p class="card-text">Entregamos tus productos en tiempo record</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-shield-alt fa-3x mb-3" style="color: #764ba2;"></i>
+                                <h5 class="card-title">Compra Segura</h5>
+                                <p class="card-text">Tus datos y transacciones están protegidos</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-star fa-3x mb-3" style="color: #f39c12;"></i>
+                                <h5 class="card-title">Calidad Premium</h5>
+                                <p class="card-text">Solo productos de la más alta calidad</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-5">
+                    <h3>Explora nuestras categorías</h3>
+                    <p class="mb-4">Descubre una amplia variedad de productos organizados por categorías</p>
+                    <a href="{% url 'tienda:categorias' %}" class="btn btn-primary me-3">
+                        <i class="fas fa-tags"></i> Ver Categorías
+                    </a>
+                    <a href="{% url 'tienda:contacto' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-envelope"></i> Contactanos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends 'tienda/base.html' %}
+
+{% block titulo %}{{ titulo }} - Mi Tienda{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="hero-section">
+    <div class="container">
+        <h1>{{ titulo }}</h1>
+        <p class="lead">Estamos aquí para ayudarte. ¡Ponte en contacto con nosotros!</p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="main-content">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="row">
+                    <!-- Contact Information -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h4 class="text-center mb-4">Información de Contacto</h4>
+                                
+                                <div class="contact-item mb-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-circle me-3">
+                                            <i class="fas fa-envelope fa-2x" style="color: #3498db;"></i>
+                                        </div>
+                                        <div>
+                                            <h6>Email</h6>
+                                            <p class="mb-0">{{ email }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="contact-item mb-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-circle me-3">
+                                            <i class="fas fa-phone fa-2x" style="color: #27ae60;"></i>
+                                        </div>
+                                        <div>
+                                            <h6>Teléfono</h6>
+                                            <p class="mb-0">{{ telefono }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="contact-item mb-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-circle me-3">
+                                            <i class="fas fa-map-marker-alt fa-2x" style="color: #e74c3c;"></i>
+                                        </div>
+                                        <div>
+                                            <h6>Dirección</h6>
+                                            <p class="mb-0">{{ direccion }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center mt-4">
+                                    <h6>Síguenos en redes sociales</h6>
+                                    <div class="social-links mt-3">
+                                        <a href="#" class="btn btn-outline-primary btn-sm me-2">
+                                            <i class="fab fa-facebook-f"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-outline-info btn-sm me-2">
+                                            <i class="fab fa-twitter"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-outline-danger btn-sm me-2">
+                                            <i class="fab fa-instagram"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-outline-primary btn-sm">
+                                            <i class="fab fa-linkedin-in"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contact Form -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h4 class="text-center mb-4">Envíanos un Mensaje</h4>
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="nombre" class="form-label">Nombre Completo</label>
+                                        <input type="text" class="form-control" id="nombre" required>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" required>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="asunto" class="form-label">Asunto</label>
+                                        <select class="form-select" id="asunto" required>
+                                            <option value="">Selecciona un asunto</option>
+                                            <option value="consulta">Consulta General</option>
+                                            <option value="producto">Información de Producto</option>
+                                            <option value="pedido">Estado de Pedido</option>
+                                            <option value="soporte">Soporte Técnico</option>
+                                            <option value="otro">Otro</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="mensaje" class="form-label">Mensaje</label>
+                                        <textarea class="form-control" id="mensaje" rows="4" required></textarea>
+                                    </div>
+                                    
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-paper-plane"></i> Enviar Mensaje
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Business Hours -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h4 class="text-center mb-4">Horarios de Atención</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <i class="fas fa-clock text-primary me-2"></i>
+                                        <strong>Lunes - Viernes:</strong> 9:00 AM - 6:00 PM
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-clock text-primary me-2"></i>
+                                        <strong>Sábado:</strong> 10:00 AM - 4:00 PM
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <i class="fas fa-clock text-muted me-2"></i>
+                                        <strong>Domingo:</strong> Cerrado
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-headset text-success me-2"></i>
+                                        <strong>Soporte 24/7</strong> por email
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

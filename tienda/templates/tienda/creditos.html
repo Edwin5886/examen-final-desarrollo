@@ -1,0 +1,87 @@
+{% extends 'tienda/base.html' %}
+
+{% block titulo %}{{ titulo }} - Mi Tienda{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="hero-section">
+    <div class="container">
+        <h1>{{ titulo }}</h1>
+        <p class="lead">Conoce al equipo detrás de este proyecto</p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="main-content">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <div class="card">
+                    <div class="card-body p-5">
+                        <div class="mb-4">
+                            <i class="fas fa-user-circle fa-6x" style="color: #667eea;"></i>
+                        </div>
+                        <h2 class="mb-3">{{ desarrollador }}</h2>
+                        <h4 class="text-muted mb-4">Desarrollador Web</h4>
+                        
+                        <div class="row mt-5">
+                            <div class="col-md-6">
+                                <div class="feature-item mb-4">
+                                    <i class="fas fa-calendar-alt fa-2x mb-3" style="color: #764ba2;"></i>
+                                    <h5>Año de Desarrollo</h5>
+                                    <p>{{ fecha_creacion }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-item mb-4">
+                                    <i class="fas fa-code fa-2x mb-3" style="color: #f39c12;"></i>
+                                    <h5>Tecnologías Utilizadas</h5>
+                                    <p>Django, HTML5, CSS3, Bootstrap</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h5>Sobre el Proyecto</h5>
+                            <p class="text-muted">{{ descripcion }}</p>
+                        </div>
+                        
+                        <div class="mt-5">
+                            <h5>Características del Sitio</h5>
+                            <div class="row mt-3">
+                                <div class="col-md-4 mb-3">
+                                    <div class="p-3 bg-light rounded">
+                                        <i class="fas fa-mobile-alt mb-2" style="color: #3498db;"></i>
+                                        <p class="mb-0 small">Diseño Responsivo</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="p-3 bg-light rounded">
+                                        <i class="fas fa-paint-brush mb-2" style="color: #e91e63;"></i>
+                                        <p class="mb-0 small">Diseño Moderno</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="p-3 bg-light rounded">
+                                        <i class="fas fa-rocket mb-2" style="color: #27ae60;"></i>
+                                        <p class="mb-0 small">Carga Rápida</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-5">
+                            <a href="{% url 'tienda:contacto' %}" class="btn btn-primary me-3">
+                                <i class="fas fa-envelope"></i> Contactar
+                            </a>
+                            <a href="{% url 'tienda:inicio' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-home"></i> Volver al Inicio
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
